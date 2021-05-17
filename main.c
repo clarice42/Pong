@@ -1,7 +1,7 @@
 /* Trabalho Final de Laboratório de Sistemas Microprocessados
  * Grupo:
  *       Bruno Couto Mariño - 190011106
- *       Clara Maia -
+ *       Clara Rezende Maia - 180030931
  */
 
 #include <msp430.h> 
