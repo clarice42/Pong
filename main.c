@@ -15,9 +15,11 @@
  *    - +5V -> 3V3
  *    - VRX -> P6.1
  */
+
 #include <msp430.h> 
 #include <stdint.h>
 #include "adc.h"
+#include "i2c.h"
 
 volatile uint16_t adcResult[2] = {0,0};
 volatile uint8_t flag=0;
@@ -30,8 +32,20 @@ uint8_t adcResult[2];
 
 void wait(uint16_t time, timeunit_t unit);
 
+/* Devaneios de Bruno
 
+   1. Definir Structs(jogador, bola) e tals (Clara)
+   2. Move Barra
+   3. Move Bola
+   4. Bate bola na Barra ou parede
+   5. Bola fez gol?
+   6. Desenha no quadrinho (Bruno)
+   7. Estado Inicial
+   8.
+   9.
+  10.
 
+ */
 /*------------------- Rotina Principal -------------------------*/
 
 void main(void)
@@ -49,7 +63,7 @@ void main(void)
 	adcConfig();
 
 	// Configurar o i2c
-	//i2cConfig();
+	i2cConfig();
 
 	// Habilitar interrupções
     __enable_interrupt();
