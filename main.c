@@ -1,7 +1,7 @@
 /* Trabalho Final de Laboratório de Sistemas Microprocessados
  * Grupo:
  *       Bruno Couto Mariño - 190011106
- *       Clara Rezende Maia - 180030931
+ *       Clara Resende Maia - 180030931
  */
 /*Portas Usadas:
  *
@@ -65,9 +65,16 @@ void main(void)
 	// Configurar o i2c
 	i2cConfig();
 
+  // Configurar o oled
+  oledConfig();
+  
 	// Habilitar interrupções
     __enable_interrupt();
 
+  oledClearDisplay();
+
+	oledSendChar(0, 0, 'o');
+	oledSendChar(0, 1, 'i');
 
     while(1){
     /*------------------- Loop Principal -------------------*/
