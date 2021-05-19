@@ -67,13 +67,12 @@
 /* ====================================================================
  * SSD1306 OLED Prototype Definitions
  * ==================================================================== */
-void oledInit();
-void sendCommand(uint8_t byte);
-void sendChar(uint8_t column, uint8_t page, uint8_t byte);
+
+void oledConfig();
+void oledSendCommand(uint8_t command);
+void oledSendChar(uint8_t column, uint8_t page, uint8_t byte);
+void oledSetPosition(uint8_t column, uint8_t page);
+void oledClearDisplay();
 void sendText(uint8_t column, uint8_t page, uint8_t* str);
-void clearDisplay(uint8_t colStart, uint8_t colEnd);
-uint8_t setColumn(uint8_t column);
-uint8_t setPage(uint8_t page);
-uint8_t setPosition(uint8_t column, uint8_t page);
 
 #endif /* __OLED_H */

@@ -21,84 +21,192 @@ const unsigned char HcenterUL[] = {                                           //
                                25                                       // 10 digits and 3 separators
 };
 
-void ssd1306_init(void) {
-    // SSD1306 init sequence
-    ssd1306_command(OLED_DISPLAYOFF);                                // 0xAE
-    ssd1306_command(OLED_SETDISPLAYCLOCKDIV);                        // 0xD5
-    ssd1306_command(0x80);                                              // the suggested ratio 0x80
+const uint8_t oled_font_5x7[96][5] = {{0x00, 0x00, 0x00, 0x00, 0x00},  // space
+                                       {0x00, 0x00, 0x4F, 0x00, 0x00},  // !
+                                       {0x00, 0x07, 0x00, 0x07, 0x00},  // "
+                                       {0x14, 0x7F, 0x14, 0x7F, 0x14},  // #
+                                       {0x24, 0x2A, 0x7F, 0x2A, 0x12},  // $
+                                       {0x23, 0x13, 0x08, 0x64, 0x62},  // %
+                                       {0x36, 0x49, 0x55, 0x22, 0x50},  // &
+                                       {0x00, 0x05, 0x03, 0x00, 0x00},  // '
+                                       {0x00, 0x1C, 0x22, 0x41, 0x00},  // (
+                                       {0x00, 0x41, 0x22, 0x1C, 0x00},  // )
+                                       {0x14, 0x08, 0x3E, 0x08, 0x14},  // *
+                                       {0x08, 0x08, 0x3E, 0x08, 0x08},  // +
+                                       {0x00, 0x50, 0x30, 0x00, 0x00},  // ,
+                                       {0x08, 0x08, 0x08, 0x08, 0x08},  // -
+                                       {0x00, 0x60, 0x60, 0x00, 0x00},  // .
+                                       {0x20, 0x10, 0x08, 0x04, 0x02},  // /
+                                       {0x3E, 0x51, 0x49, 0x45, 0x3E},  // 0
+                                       {0x00, 0x42, 0x7F, 0x40, 0x00},  // 1
+                                       {0x42, 0x61, 0x51, 0x49, 0x46},  // 2
+                                       {0x21, 0x41, 0x45, 0x4B, 0x31},  // 3
+                                       {0x18, 0x14, 0x12, 0x7F, 0x10},  // 4
+                                       {0x27, 0x49, 0x49, 0x49, 0x31},  // 5
+                                       {0x3C, 0x4A, 0x49, 0x49, 0x30},  // 6
+                                       {0x01, 0x71, 0x09, 0x05, 0x03},  // 7
+                                       {0x36, 0x49, 0x49, 0x49, 0x36},  // 8
+                                       {0x06, 0x49, 0x49, 0x29, 0x1E},  // 9
+                                       {0x00, 0x36, 0x36, 0x00, 0x00},  // :
+                                       {0x00, 0x56, 0x36, 0x00, 0x00},  // ;
+                                       {0x08, 0x14, 0x22, 0x41, 0x00},  // <
+                                       {0x14, 0x14, 0x14, 0x14, 0x14},  // =
+                                       {0x00, 0x41, 0x22, 0x14, 0x08},  // >
+                                       {0x02, 0x01, 0x51, 0x09, 0x06},  // ?
+                                       {0x32, 0x49, 0x79, 0x41, 0x3E},  // @
+                                       {0x7E, 0x11, 0x11, 0x11, 0x7E},  // A
+                                       {0x7F, 0x49, 0x49, 0x49, 0x36},  // B
+                                       {0x3E, 0x41, 0x41, 0x41, 0x22},  // C
+                                       {0x7F, 0x41, 0x41, 0x22, 0x1C},  // D
+                                       {0x7F, 0x49, 0x49, 0x49, 0x41},  // E
+                                       {0x7F, 0x09, 0x09, 0x09, 0x01},  // F
+                                       {0x3E, 0x41, 0x49, 0x49, 0x7A},  // G
+                                       {0x7F, 0x08, 0x08, 0x08, 0x7F},  // H
+                                       {0x00, 0x41, 0x7F, 0x41, 0x00},  // I
+                                       {0x20, 0x40, 0x41, 0x3F, 0x01},  // J
+                                       {0x7F, 0x08, 0x14, 0x22, 0x41},  // K
+                                       {0x7F, 0x40, 0x40, 0x40, 0x40},  // L
+                                       {0x7F, 0x02, 0x0C, 0x02, 0x7F},  // M
+                                       {0x7F, 0x04, 0x08, 0x10, 0x7F},  // N
+                                       {0x3E, 0x41, 0x41, 0x41, 0x3E},  // O
+                                       {0x7F, 0x09, 0x09, 0x09, 0x06},  // P
+                                       {0x3E, 0x41, 0x51, 0x21, 0x5E},  // Q
+                                       {0x7F, 0x09, 0x19, 0x29, 0x46},  // R
+                                       {0x46, 0x49, 0x49, 0x49, 0x31},  // S
+                                       {0x01, 0x01, 0x7F, 0x01, 0x01},  // T
+                                       {0x3F, 0x40, 0x40, 0x40, 0x3F},  // U
+                                       {0x1F, 0x20, 0x40, 0x20, 0x1F},  // V
+                                       {0x3F, 0x40, 0x38, 0x40, 0x3F},  // W
+                                       {0x63, 0x14, 0x08, 0x14, 0x63},  // X
+                                       {0x07, 0x08, 0x70, 0x08, 0x07},  // Y
+                                       {0x61, 0x51, 0x49, 0x45, 0x43},  // Z
+                                       {0x7F, 0x41, 0x41, 0x00, 0x00},  // [
+                                       {0x02, 0x04, 0x08, 0x10, 0x20},  // forward slash
+                                       {0x00, 0x41, 0x41, 0x7F, 0x00},  // ]
+                                       {0x04, 0x02, 0x01, 0x02, 0x04},  // ^
+                                       {0x40, 0x40, 0x40, 0x40, 0x40},  // _
+                                       {0x00, 0x01, 0x02, 0x04, 0x00},  // `
+                                       {0x20, 0x54, 0x54, 0x54, 0x78},  // a
+                                       {0x7F, 0x48, 0x44, 0x44, 0x38},  // b
+                                       {0x38, 0x44, 0x44, 0x44, 0x20},  // c
+                                       {0x38, 0x44, 0x44, 0x48, 0x7F},  // d
+                                       {0x38, 0x54, 0x54, 0x54, 0x18},  // e
+                                       {0x08, 0x7E, 0x09, 0x01, 0x02},  // f
+                                       {0x0C, 0x52, 0x52, 0x52, 0x3E},  // g
+                                       {0x7F, 0x08, 0x04, 0x04, 0x78},  // h
+                                       {0x00, 0x44, 0x7D, 0x40, 0x00},  // i
+                                       {0x20, 0x40, 0x44, 0x3D, 0x00},  // j
+                                       {0x7F, 0x10, 0x28, 0x44, 0x00},  // k
+                                       {0x00, 0x41, 0x7F, 0x40, 0x00},  // l
+                                       {0x7C, 0x04, 0x18, 0x04, 0x78},  // m
+                                       {0x7C, 0x08, 0x04, 0x04, 0x78},  // n
+                                       {0x38, 0x44, 0x44, 0x44, 0x38},  // o
+                                       {0x7C, 0x14, 0x14, 0x14, 0x08},  // p
+                                       {0x08, 0x14, 0x14, 0x18, 0x7C},  // q
+                                       {0x7C, 0x08, 0x04, 0x04, 0x08},  // r
+                                       {0x48, 0x54, 0x54, 0x54, 0x20},  // s
+                                       {0x04, 0x3F, 0x44, 0x40, 0x20},  // t
+                                       {0x3C, 0x40, 0x40, 0x20, 0x7C},  // u
+                                       {0x1C, 0x20, 0x40, 0x20, 0x1C},  // v
+                                       {0x3C, 0x40, 0x30, 0x40, 0x3C},  // w
+                                       {0x44, 0x28, 0x10, 0x28, 0x44},  // x
+                                       {0x0C, 0x50, 0x50, 0x50, 0x3C},  // y
+                                       {0x44, 0x64, 0x54, 0x4C, 0x44},  // z
+};
 
-    ssd1306_command(OLED_SETMULTIPLEX);                              // 0xA8
-    ssd1306_command(OLED_LCDHEIGHT - 1);
+void oledConfig() {
 
-    ssd1306_command(OLED_SETDISPLAYOFFSET);                          // 0xD3
-    ssd1306_command(0x0);                                               // no offset
-    ssd1306_command(OLED_SETSTARTLINE | 0x0);                        // line #0
-    ssd1306_command(OLED_CHARGEPUMP);                                // 0x8D
-    ssd1306_command(0x14);                                              // generate high voltage from 3.3v line internally
-    ssd1306_command(OLED_MEMORYMODE);                                // 0x20
-    ssd1306_command(0x00);                                              // 0x0 act like ks0108
-    ssd1306_command(OLED_SEGREMAP | 0x1);
-    ssd1306_command(OLED_COMSCANDEC);
+    oledSendCommand(0xAE);    // Set display OFF
 
-    ssd1306_command(OLED_SETCOMPINS);                                // 0xDA
-    ssd1306_command(0x12);
-    ssd1306_command(OLED_SETCONTRAST);                               // 0x81
-    ssd1306_command(0xCF);
+    oledSendCommand(0xD5);    // Set Display Clock Divide Ratio / OSC Frequency
+    oledSendCommand(0x80);    // Display Clock Divide Ratio / OSC Frequency
 
-    ssd1306_command(OLED_SETPRECHARGE);                              // 0xd9
-    ssd1306_command(0xF1);
-    ssd1306_command(OLED_SETVCOMDETECT);                             // 0xDB
-    ssd1306_command(0x40);
-    ssd1306_command(OLED_DISPLAYALLON_RESUME);                       // 0xA4
-    ssd1306_command(OLED_NORMALDISPLAY);                             // 0xA6
+    oledSendCommand(0xA8);    // Set Multiplex Ratio
+    oledSendCommand(0x3F);    // Multiplex Ratio for 128x64 (64-1)
 
-    ssd1306_command(OLED_DEACTIVATE_SCROLL);
+    oledSendCommand(0xD3);    // Set Display Offset
+    oledSendCommand(0x00);    // Display Offset
 
-    ssd1306_command(OLED_DISPLAYON);                                 //--turn on oled panel
-} // end ssd1306_init
+    oledSendCommand(0x40);    // Set Display Start Line
 
-void ssd1306_command(unsigned char command) {
+    oledSendCommand(0x8D);    // Set Charge Pump
+    oledSendCommand(0x14);    // Charge Pump (0x10 External, 0x14 Internal DC/DC)
+
+    oledSendCommand(0x20);
+    oledSendCommand(0x01);
+    oledSendCommand(0xA0 | 0x1);
+    oledSendCommand(0xC8);
+
+    oledSendCommand(0xDA);    // Set COM Hardware Configuration
+    oledSendCommand(0x12);    // COM Hardware Configuration
+
+    oledSendCommand(0x81);    // Set Contrast
+    oledSendCommand(0xCF);    // Contrast
+
+    oledSendCommand(0xD9);    // Set Pre-Charge Period
+    oledSendCommand(0xF1);    // Set Pre-Charge Period (0x22 External, 0xF1 Internal)
+
+    oledSendCommand(0xDB);    // Set VCOMH Deselect Level
+    oledSendCommand(0x40);    // VCOMH Deselect Level
+
+    oledSendCommand(0xA4);    // Set all pixels OFF
+    oledSendCommand(0xA6);    // Set display not inverted
+    oledSendCommand(0x2E);
+    oledSendCommand(0xAF);    // Set display On
+
+}
+
+void oledSendCommand(uint8_t command) {
+    uint8_t buffer[2];
     buffer[0] = 0x80;
     buffer[1] = command;
 
-    i2c_write(buffer, 2);
-} // end ssd1306_command
+    i2cWrite(OLED_I2C_ADDRESS, &buffer, 2);
+}
 
-void ssd1306_clearDisplay(void) {
+void oledSendChar(uint8_t column, uint8_t page, uint8_t byte) {
+    uint8_t buffer[3], i;
 
-    ssd1306_setPosition(0, 0);
-    uint8_t i;
-    for (i = 64; i > 0; i--) {                                          // count down for loops when possible for ULP
-        uint8_t x;
-        for(x = 16; x > 0; x--) {
-            if (x == 1) {
-                buffer[x-1] = 0x40;
-            } else {
-                buffer[x-1] = 0x0;
-            }
-        }
+    buffer[0] = 0x40;
 
-        i2c_write(buffer, 17);
+    for(i = 0; i < 5; i++) {
+        oledSetPosition(column + i, page);
+
+        buffer[1] = oled_font_5x7[byte - ' '][i];
+        buffer[2] = 0x00;
+
+        i2cWrite(OLED_I2C_ADDRESS, &buffer, 3);
     }
-} // end ssd1306_clearDisplay
+}
 
-void ssd1306_setPosition(uint8_t column, uint8_t page) {
+void oledSetPosition(uint8_t column, uint8_t page) {
     if (column > 128) {
-        column = 0;                                                     // constrain column to upper limit
+        column = 0;
     }
 
     if (page > 8) {
-        page = 0;                                                       // constrain page to upper limit
+        page = 0;
     }
 
-    ssd1306_command(OLED_COLUMNADDR);
-    ssd1306_command(column);                                            // Column start address (0 = reset)
-    ssd1306_command(OLED_LCDWIDTH-1);                                // Column end address (127 = reset)
+    oledSendCommand(0x21);
+    oledSendCommand(column);
+    oledSendCommand(127);
 
-    ssd1306_command(OLED_PAGEADDR);
-    ssd1306_command(page);                                              // Page start address (0 = reset)
-    ssd1306_command(7);                                                 // Page end address
-} // end ssd1306_setPosition
+    oledSendCommand(0x22);
+    oledSendCommand(page);
+    oledSendCommand(7);
+}
+
+void oledClearDisplay() {
+    uint8_t buffer[9] = {0x00}, i;
+
+    oledSetPosition(0, 0);
+
+    buffer[0] = 0x40;
+
+    for (i=0; i < 128; i++)
+        i2cWrite(OLED_I2C_ADDRESS, &buffer, 9);
+}
 
 void ssd1306_printText(uint8_t x, uint8_t y, char *ptString) {
     ssd1306_setPosition(x, y);
