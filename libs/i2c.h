@@ -2,7 +2,7 @@
 #define __I2C_H
 
 #include <msp430.h>
-
+#include <stdint.h>
 
 void i2cConfig();
 void i2cWriteByte(uint8_t addr, uint8_t byte);
