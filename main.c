@@ -105,13 +105,23 @@ void main(void)
     }
 
     oledClearDisplay();
-    if(P1.score == 12) {
-        oledSendString(5, 3, "O da esquerda venceu!");
-        oledSendString(5, 4, "UHUUUULL");
+    if(P1.score >= 12) {
+        oledSendString(5, 0, "------------------------");
+        oledSendString(5, 1, "------------------------");
+        oledSendString(5, 2, "---- O Vencedor eh -----");
+        oledSendString(5, 3, "------------------------");
+        oledSendString(5, 4, "------- PLAYER 1 -------");
+        oledSendString(5, 5, "------------------------");
+        oledSendString(5, 6, "------------------------");
     }
     else {
-        oledSendString(5, 3, "O da direita venceu!");
-        oledSendString(5, 4, "UHUUUULL");
+        oledSendString(5, 0, "------------------------");
+        oledSendString(5, 1, "------------------------");
+        oledSendString(5, 2, "---- O Vencedor eh -----");
+        oledSendString(5, 3, "------------------------");
+        oledSendString(5, 4, "------- PLAYER 2 -------");
+        oledSendString(5, 5, "------------------------");
+        oledSendString(5, 6, "------------------------");
     }
 }
 
