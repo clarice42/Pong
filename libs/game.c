@@ -48,8 +48,8 @@ void playersInit(Player *P1, Player *P2, Ball *ball){
     ball->x = OLED_LCDWIDTH / 2;
     ball->y = OLED_LCDHEIGHT / 2;
     ball->size = 4;
-    ball->speedX = 1;
-    ball->speedY = rand() % 3;
+    ball->speedX = (rand() % 3 + 1) * ( (rand()%2)*2 - 1);
+    ball->speedY = (rand() % 3 + 1);
 }
 
 void movePlayerDown(Player *player){
@@ -79,11 +79,6 @@ void moveBall(Ball *ball) {
     aux_x = ball->x + ball->speedX;
     aux_y = ball->y + ball->speedY;
 
-    // Verifica se a bola não passou dos limites do quadro no eixo x
-//    if( (aux_x <= 0) || ((aux_x + ball->size) >= OLED_LCDWIDTH) ) {
-//        ball->x = OLED_LCDWIDTH / 2;
-//        ball->y = OLED_LCDHEIGHT / 2;
-//    }
 
     // Verifica se a bola não passou dos limites do quadro no eixo y
     // e inverte o sentido do movimento
@@ -105,6 +100,8 @@ void hitBar(Player *player1, Player *player2, Ball *ball) {
             player1->score += 1;
             ball->x = OLED_LCDWIDTH / 2;
             ball->y = OLED_LCDHEIGHT / 2;
+            ball->speedX = (rand() % 3 + 1) * ( (rand()%2)*2 - 1);
+            ball->speedY = rand() % 3 + 1;
         }
     }
 
@@ -117,6 +114,8 @@ void hitBar(Player *player1, Player *player2, Ball *ball) {
             player2->score += 1;
             ball->x = OLED_LCDWIDTH / 2;
             ball->y = OLED_LCDHEIGHT / 2;
+            ball->speedX = (rand() % 3 + 1) * ( (rand()%2)*2 - 1);
+            ball->speedY = rand() % 3 + 1;
         }
     }
 
