@@ -22,6 +22,7 @@
 #include "libs/i2c.h"
 #include "libs/oled.h"
 #include "libs/game.h"
+#include "libs/clock.h"
 
 volatile uint16_t adcResult[2] = {0,0};
 volatile uint8_t flag=0;
@@ -34,7 +35,6 @@ uint8_t  timerCount = 0;
 void wait(uint16_t time, timeunit_t unit);
 void checkJoystick(Player * player, uint8_t i);
 /* Devaneios de Bruno
-
    1. Definir Structs(jogador, bola) e tals (Clara)
    2. Move Barra
    3. Move Bola
@@ -45,7 +45,6 @@ void checkJoystick(Player * player, uint8_t i);
    8.
    9.
   10.
-
  */
 /*------------------- Rotina Principal -------------------------*/
 
@@ -59,6 +58,9 @@ void main(void)
         TA0CTL = (TASSEL__SMCLK | MC__UP);
         TA0CCR0 = 65536 - 1;                                // ~16Hz
         TA0CCTL0 = CCIE;                                    // Habilita interrupção do timer
+
+    // Configurar o Clock
+    clockConfig();
 
     // Configurar o ADC
     adcConfig();
@@ -76,27 +78,52 @@ void main(void)
 
     //Testes
     Player P1,P2;
-    playersInit(&P1, &P2);
-    drawVerticalBar(P1.bar);
-    drawVerticalBar(P2.bar);
-    while(1){
-        printBoard();
+    Ball ball;
+
+    playersInit(&P1, &P2, &ball);
+
+    drawVerticalBar(P1.bar.x, P1.bar.y, P1.bar.length, P1.bar.thickness);
+    drawVerticalBar(P2.bar.x, P2.bar.y, P2.bar.length, P2.bar.thickness);
+    drawVerticalBar(ball.x, ball.y, ball.size, ball.size);
+
+    while(!(gameOver(&P1, &P2))){
+        clear();
+
         checkJoystick(&P1,1);
         checkJoystick(&P2,2);
+        moveBall(&ball);
+        hitBar(&P1, &P2, &ball);
+
+        changeScore(-1, P1.score);
+        changeScore(1, P2.score);
+        drawVerticalBar(P1.bar.x, P1.bar.y, P1.bar.length, P1.bar.thickness);
+        drawVerticalBar(P2.bar.x, P2.bar.y, P2.bar.length, P2.bar.thickness);
+        drawVerticalBar(ball.x, ball.y, ball.size, ball.size);
+        drawMiddleLine();
+        printBoard();
+
     }
 
-
+    oledClearDisplay();
+    if(P1.score == 12) {
+        oledSendString(5, 3, "O da esquerda venceu!");
+        oledSendString(5, 4, "UHUUUULL");
+    }
+    else {
+        oledSendString(5, 3, "O da direita venceu!");
+        oledSendString(5, 4, "UHUUUULL");
+    }
 }
 
 void checkJoystick(Player * player, uint8_t i){
     if(adcResult[i-1]<10000){
         movePlayerUp(player);
-        drawVerticalBar(player->bar);
+        drawVerticalBar(player->bar.x, player->bar.y, player->bar.length, player->bar.thickness);
 
     }
-    if(adcResult[i-1]>20000){
+    if(adcResult[i-1]>25000){
         movePlayerDown(player);
-        drawVerticalBar(player->bar);
+        drawVerticalBar(player->bar.x, player->bar.y, player->bar.length, player->bar.thickness);
     }
     return;
 
@@ -195,23 +222,3 @@ void wait(uint16_t time, timeunit_t unit) {
 __interrupt void TA2_CCR0_ISR() {
   count--;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

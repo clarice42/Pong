@@ -73,6 +73,6 @@ void oledSendCommand(uint8_t command);
 void oledSendChar(uint8_t column, uint8_t page, uint8_t byte);
 void oledSetPosition(uint8_t column, uint8_t page);
 void oledClearDisplay();
-void sendText(uint8_t column, uint8_t page, uint8_t* str);
+void oledSendString(uint8_t column, uint8_t page, uint8_t *string);
 
 #endif /* __OLED_H */
