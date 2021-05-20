@@ -18,8 +18,10 @@
 
 #include <msp430.h> 
 #include <stdint.h>
-#include "adc.h"
-#include "i2c.h"
+#include "libs/adc.h"
+#include "libs/i2c.h"
+#include "libs/oled.h"
+#include "libs/game.h"
 
 volatile uint16_t adcResult[2] = {0,0};
 volatile uint8_t flag=0;
@@ -28,10 +30,9 @@ volatile uint8_t flag=0;
 typedef enum {us, ms, sec, min} timeunit_t;
 uint16_t count;
 uint8_t  timerCount = 0;
-uint8_t adcResult[2];
 
 void wait(uint16_t time, timeunit_t unit);
-
+void checkJoystick(Player * player, uint8_t i);
 /* Devaneios de Bruno
 
    1. Definir Structs(jogador, bola) e tals (Clara)
@@ -50,41 +51,60 @@ void wait(uint16_t time, timeunit_t unit);
 
 void main(void)
 {
-	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
+    WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
 
-	/*------------------- Configuração -------------------*/
+    /*------------------- Configuração -------------------*/
 
-	// Configurar Timer A0 - Controla a captura do adc
-	    TA0CTL = (TASSEL__SMCLK | MC__UP);
-	    TA0CCR0 = 65536 - 1;                                // ~16Hz
-	    TA0CCTL0 = CCIE;                                    // Habilita interrupção do timer
+    // Configurar Timer A0 - Controla a captura do adc
+        TA0CTL = (TASSEL__SMCLK | MC__UP);
+        TA0CCR0 = 65536 - 1;                                // ~16Hz
+        TA0CCTL0 = CCIE;                                    // Habilita interrupção do timer
 
-	// Configurar o ADC
-	adcConfig();
+    // Configurar o ADC
+    adcConfig();
 
-	// Configurar o i2c
-	i2cConfig();
+    // Configurar o i2c
+    i2cConfig();
 
   // Configurar o oled
-  oledConfig();
-  
-	// Habilitar interrupções
+    oledConfig();
+
+    // Habilitar interrupções
     __enable_interrupt();
 
-  oledClearDisplay();
+    oledClearDisplay();
 
-	oledSendChar(0, 0, 'o');
-	oledSendChar(0, 1, 'i');
-
+    //Testes
+    Player P1,P2;
+    playersInit(&P1, &P2);
+    drawVerticalBar(P1.bar);
+    drawVerticalBar(P2.bar);
     while(1){
-    /*------------------- Loop Principal -------------------*/
-        while(flag){
-
-            //Atualiza o OLED
-            flag=0;
-        }
+        printBoard();
+        checkJoystick(&P1,1);
+        checkJoystick(&P2,2);
     }
+
+
 }
+
+void checkJoystick(Player * player, uint8_t i){
+    if(adcResult[i-1]<10000){
+        movePlayerUp(player);
+        drawVerticalBar(player->bar);
+
+    }
+    if(adcResult[i-1]>20000){
+        movePlayerDown(player);
+        drawVerticalBar(player->bar);
+    }
+    return;
+
+}
+
+
+
+
 
 
 
@@ -123,6 +143,7 @@ __interrupt void ADC_RESULT(){
                     ADC12MEM15 );
 
     ADC12CTL0 |= ADC12ENC;                  // Habilita o trigger
+    flag=1;
 }
 
 
@@ -174,7 +195,6 @@ void wait(uint16_t time, timeunit_t unit) {
 __interrupt void TA2_CCR0_ISR() {
   count--;
 }
-
 
 
 

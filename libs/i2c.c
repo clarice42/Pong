@@ -16,7 +16,7 @@ void i2cConfig(){
     UCB1CTL1 |= UCSSEL__SMCLK;              // Seleciona o SMCLK ~1MHz
     UCB1BR0 = 64;                           // fSCL = SMCLK/64 = ~400kHz
     UCB1BR1 = 0;                            // UCBRx = (UCxxBR0 + UCxxBR1 * 256) -> fSCL = SMCLK/USBRx
-    UCB0CTL1 &= ~UCSWRST;                   // Zera os bits de RST para a interface funcionar
+    UCB1CTL1 &= ~UCSWRST;                   // Zera os bits de RST para a interface funcionar
     return;
 }
 
