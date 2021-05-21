@@ -14,6 +14,12 @@
  *    - GND -> GND
  *    - +5V -> 3V3
  *    - VRX -> P6.1
+ *
+ * - OLED
+ *    - GND -> GND
+ *    - VCC -> 3V3
+ *    - SLC -> P4.2
+ *    - SDA -> P4.1
  */
 
 #include <msp430.h> 
@@ -34,18 +40,7 @@ uint8_t  timerCount = 0;
 
 void wait(uint16_t time, timeunit_t unit);
 void checkJoystick(Player * player, uint8_t i);
-/* Devaneios de Bruno
-   1. Definir Structs(jogador, bola) e tals (Clara)
-   2. Move Barra
-   3. Move Bola
-   4. Bate bola na Barra ou parede
-   5. Bola fez gol?
-   6. Desenha no quadrinho (Bruno)
-   7. Estado Inicial
-   8.
-   9.
-  10.
- */
+
 /*------------------- Rotina Principal -------------------------*/
 
 void main(void)
